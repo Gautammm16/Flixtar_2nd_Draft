@@ -76,7 +76,7 @@ const CompanyCarousel = () => {
 
       <div
         ref={carouselRef}
-        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar transition-all duration-2000 ease-in-out"
+        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar transition-all duration-1000 ease-in-out"
         style={{
           scrollBehavior: 'smooth',
         }}
