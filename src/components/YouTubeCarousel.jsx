@@ -368,7 +368,7 @@ const YouTubeCarousel = () => {
   };
 
   return (
-    <section className="w-full bg-secondary px-4 md:px-8 lg:px-16 py-16 sm:py-20">
+    <section className="w-full bg-secondary px-4 md:px-8 lg:px-16 py-16 sm:py-20" id='work'>
       <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-center mb-12 text-white">
         Where your vision <span className="text-gradient">becomes Reality</span>
       </h2>
