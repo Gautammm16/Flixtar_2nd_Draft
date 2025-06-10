@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
 const Footer = () => {
@@ -12,59 +11,64 @@ const Footer = () => {
               Creating compelling visual stories that captivate audiences and elevate brands.
             </p>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-gray-400 hover:text-accent transition">
+                <a href="#hero" className="text-gray-400 hover:text-accent transition">
                   Home
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/projects" className="text-gray-400 hover:text-accent transition">
-                  Projects
-                </Link>
+                <a href="#results" className="text-gray-400 hover:text-accent transition">
+                  Results
+                </a>
               </li>
               <li>
-                <Link to="/testimonials" className="text-gray-400 hover:text-accent transition">
+                <a href="#work" className="text-gray-400 hover:text-accent transition">
+                  Our Work
+                </a>
+              </li>
+              <li>
+                <a href="#testimonials" className="text-gray-400 hover:text-accent transition">
                   Testimonials
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-accent transition">
-                  Contact
-                </Link>
+                <a href="#book" className="text-gray-400 hover:text-accent transition">
+                  Book a Call
+                </a>
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Services</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/projects?category=video-branding" className="text-gray-400 hover:text-accent transition">
+                <a href="/projects?category=video-branding" className="text-gray-400 hover:text-accent transition">
                   Video Branding
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/projects?category=social-media" className="text-gray-400 hover:text-accent transition">
+                <a href="/projects?category=social-media" className="text-gray-400 hover:text-accent transition">
                   Social Media
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/projects?category=content-creation" className="text-gray-400 hover:text-accent transition">
+                <a href="/projects?category=content-creation" className="text-gray-400 hover:text-accent transition">
                   Content Creation
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/projects?category=marketing" className="text-gray-400 hover:text-accent transition">
+                <a href="/projects?category=marketing" className="text-gray-400 hover:text-accent transition">
                   Marketing
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Connect</h4>
             <div className="flex space-x-4 mb-4">
@@ -81,15 +85,19 @@ const Footer = () => {
                 <FaLinkedin size={20} />
               </a>
             </div>
+            
             <p className="text-gray-400">
-              Email: info@flixtar.com
+              Email: info.flixtar@gmail.com
             </p>
+            <br />
             <p className="text-gray-400">
-              Phone: +1 (555) 123-4567
+              Office Address : <br />  910, Zircon Arena, near Pal Haveli, Bhatha Road,  Surat. Gujarat,India.
+              <br />
+              Pin Code : 394510
             </p>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 pt-8 text-center text-gray-500">
           <p>&copy; {new Date().getFullYear()} Flixtar. All rights reserved.</p>
         </div>

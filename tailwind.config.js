@@ -10,6 +10,11 @@ export default {
   ],
   theme: {
     extend: {
+      screens :{
+
+        '3xl':'1600px',
+        '4xl':'1920px',
+      },
       colors: {
         border: "hsl(214.3 31.8% 91.4%)",
         primary: {
