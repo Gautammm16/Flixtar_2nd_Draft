@@ -45,18 +45,29 @@ const CompanyCarousel = () => {
     const container = carouselRef.current;
     let scrollInterval;
 
-    const isTabletOrBelow = window.innerWidth < 768;
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        scrollInterval = setInterval(() => {
+          if (container) {
+            container.scrollLeft += 1;
+            if (container.scrollLeft + container.offsetWidth >= container.scrollWidth) {
+              container.scrollLeft = 0;
+            }
+          }
+        }, 20);
+      } else {
+        clearInterval(scrollInterval);
+        if (container) container.scrollLeft = 0;
+      }
+    };
 
-    if (isTabletOrBelow && container) {
-      scrollInterval = setInterval(() => {
-        container.scrollLeft += 1;
-        if (container.scrollLeft + container.offsetWidth >= container.scrollWidth) {
-          container.scrollLeft = 0;
-        }
-      }, 20);
-    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
 
-    return () => clearInterval(scrollInterval);
+    return () => {
+      clearInterval(scrollInterval);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (
@@ -65,11 +76,9 @@ const CompanyCarousel = () => {
 
       <div
         ref={carouselRef}
-        className="flex flex-wrap justify-center items-center gap-10 overflow-x-auto md:overflow-x-hidden px-4"
+        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar transition-all duration-2000 ease-in-out"
         style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth',
         }}
       >
         {companies.map((company, index) => (
@@ -90,9 +99,14 @@ const CompanyCarousel = () => {
         ))}
       </div>
 
+      {/* Hide scrollbar utility */}
       <style>{`
-        div::-webkit-scrollbar {
+        .no-scrollbar::-webkit-scrollbar {
           display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
     </div>

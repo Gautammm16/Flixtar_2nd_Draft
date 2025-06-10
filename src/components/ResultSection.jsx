@@ -66,7 +66,7 @@ const ResultsRow = ({ items, className }) => (
 );
 
 const ResultCard = ({ item }) => (
-  <div className="card-3d group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500">
+  <div className="card-3d group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-2000">
     <img
       src={item.src}
       alt={item.title || 'Result'}

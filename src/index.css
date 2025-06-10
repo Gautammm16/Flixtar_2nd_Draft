@@ -41,6 +41,69 @@
   }
 }
 
+/* 
+
+*/
+
+/* Add to your global CSS */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes text-glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.7); }
+  50% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.9); }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-medium {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes spin-fast {
+  to { transform: rotate(720deg); }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.animate-float {
+  animation: float linear infinite;
+}
+
+.animate-text-glow {
+  animation: text-glow 2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+.animate-spin-medium {
+  animation: spin-medium 2s linear infinite;
+}
+
+.animate-spin-fast {
+  animation: spin-fast 1s linear infinite;
+}
+
+
+/* 
+
+*/
+
 @layer components {
   /* Glassmorphism effect */
   .glass {

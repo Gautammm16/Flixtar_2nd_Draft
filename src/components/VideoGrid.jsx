@@ -1,11 +1,12 @@
+// VideoGrid.jsx
 import React from 'react';
 
 const videos = [
-  { url: 'https://player.vimeo.com/video/1027579242' },
-  { url: 'https://player.vimeo.com/video/1027581820' },
-  { url: 'https://player.vimeo.com/video/1027581935' },
-  { url: 'https://player.vimeo.com/video/1027582384' },
-  { url: 'https://player.vimeo.com/video/1027581890' },
+  { url: 'https://player.vimeo.com/video/1027579242?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027581820?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027581935?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027582384?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027581890?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
 ];
 
 export const VideoGrid = () => {
@@ -20,54 +21,45 @@ export const VideoGrid = () => {
           {/* First row: 3 videos */}
           <div className="flex flex-wrap justify-center gap-6 w-full">
             {videos.slice(0, 3).map((video, index) => (
-              <div
-                key={index}
-                className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
-                style={{
-                  aspectRatio: '9 / 16',
-                  width: '100%',
-                  maxWidth: '300px',
-                  flex: '1 1 30%',
-                }}
-              >
-                <iframe
-                  src={video.url}
-                  title={`Video ${index + 1}`}
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
+              <VideoCard key={index} video={video} index={index} />
             ))}
           </div>
 
           {/* Second row: 2 videos */}
           <div className="flex flex-wrap justify-center gap-6 w-full">
             {videos.slice(3).map((video, index) => (
-              <div
-                key={index + 3}
-                className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
-                style={{
-                  aspectRatio: '9 / 16',
-                  width: '100%',
-                  maxWidth: '300px',
-                  flex: '1 1 30%', // same as row 1
-                }}
-              >
-                <iframe
-                  src={video.url}
-                  title={`Video ${index + 4}`}
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
+              <VideoCard key={index + 3} video={video} index={index + 3} />
             ))}
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const VideoCard = ({ video, index }) => {
+  // Add minimal controls parameters to existing URL
+  const embedUrl = `${video.url}&amp;controls=1&amp;autoplay=0&amp;title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;transparent=0&amp;background=1&amp;muted=0&amp;loop=0&amp;texttrack=0&amp;playbar=0&amp;volume=0&amp;fullscreen=0&amp;pip=0&amp;speed=0&amp;keyboard=0`;
+
+  return (
+    <div
+      className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
+      style={{
+        aspectRatio: '9 / 16',
+        width: '100%',
+        maxWidth: '300px',
+        flex: '1 1 30%',
+      }}
+    >
+      <iframe
+        src={embedUrl}
+        title={`Video ${index + 1}`}
+        className="w-full h-full"
+        frameBorder="0"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowFullScreen
+        loading="lazy"
+      />
     </div>
   );
 };
