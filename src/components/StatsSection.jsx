@@ -28,25 +28,36 @@ export const StatsSection = () => {
   }, []);
 
   return (
-    <div
+    <section
       ref={sectionRef}
+      id="statistics"
       className="bg-secondary py-16 px-6"
+      aria-labelledby="stats-heading"
     >
+      <div className="max-w-6xl mx-auto text-center mb-10">
+        <h2 id="stats-heading" className="text-4xl font-bold text-white">
+          Our Impact in Numbers
+        </h2>
+        <p className="text-accent-light/80 mt-2 text-sm md:text-base">
+          Trusted by clients worldwide with proven results.
+        </p>
+      </div>
+
       {showStats && (
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-around gap-12 text-center">
+        <div className="flex flex-col md:flex-row justify-around gap-12 text-center">
           <StatItem 
             number={50} 
             suffix="+" 
             title="Trusted Clients" 
             description="Demonstrating our long-standing trust and expertise in the industry." 
-            delay={0.5}
+            delay={0.3}
           />
           <StatItem 
             number={1000} 
             suffix="+" 
             title="Successful Projects" 
             description="Building strong partnerships through a diverse range of successful projects." 
-            delay={0.5}
+            delay={0.4}
           />
           <StatItem 
             number={100} 
@@ -57,19 +68,20 @@ export const StatsSection = () => {
           />
         </div>
       )}
-    </div>
+    </section>
   );
 };
 
 const StatItem = ({ number, suffix, title, description, delay }) => (
-  <div
+  <article
     className="animate-fade-in-up"
     style={{ animationDelay: `${delay}s`, animationFillMode: 'both' }}
+    aria-label={`${number}${suffix} ${title}`}
   >
     <h3 className="stat-number text-4xl font-bold text-white">
       <CountUp end={number} duration={2} suffix={suffix} />
     </h3>
     <p className="font-display font-medium text-light mb-2">{title}</p>
     <p className="text-sm text-accent-light/80 max-w-xs mx-auto">{description}</p>
-  </div>
+  </article>
 );

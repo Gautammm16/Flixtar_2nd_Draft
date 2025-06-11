@@ -50,14 +50,23 @@ const Testimonials = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-primary">
+    <section
+      className="py-20 bg-primary"
+      id="testimonials-carousel"
+      aria-labelledby="testimonial-heading"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-4xl font-bold mb-4">
-          What Our <span className="text-gradient">Clients Say</span>
-        </h2>
-        <p className="text-lg text-gray-100 mb-10">
-          Hear directly from the amazing people we've worked with.
-        </p>
+        <header>
+          <h2
+            id="testimonial-heading"
+            className="text-4xl font-bold mb-4 text-white"
+          >
+            What Our <span className="text-gradient">Clients Say</span>
+          </h2>
+          <p className="text-lg text-gray-100 mb-10">
+            Hear directly from the amazing people we've worked with.
+          </p>
+        </header>
 
         <Swiper
           modules={[Pagination, Autoplay]}
@@ -75,23 +84,25 @@ const Testimonials = () => {
         >
           {testimonials.map((testimonial, index) => (
             <SwiperSlide key={index}>
-              <div
+              <article
                 className="bg-white shadow-xl rounded-2xl p-8 mx-4 transition-transform transform hover:scale-105 duration-300"
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
+                aria-label={`Testimonial from ${testimonial.name}`}
               >
                 <div className="mb-6 w-20 h-20 mx-auto overflow-hidden rounded-full">
                   <img
                     src={testimonial.img}
-                    alt={testimonial.name}
+                    alt={`Photo of ${testimonial.name}`}
                     className="w-full h-full object-cover object-center"
+                    loading="lazy"
                   />
                 </div>
                 <div className="text-center">
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">{testimonial.name}</h3>
                   <p className="text-gray-600 italic leading-relaxed">"{testimonial.text}"</p>
                 </div>
-              </div>
+              </article>
             </SwiperSlide>
           ))}
         </Swiper>

@@ -71,8 +71,14 @@ const CompanyCarousel = () => {
   }, []);
 
   return (
-    <div className="relative w-full px-6 py-10 bg-primary text-white">
-      <h2 className="text-3xl font-bold mb-8 text-center">Portfolio Clients</h2>
+    <section
+      id="portfolio"
+      aria-label="Portfolio Clients Carousel"
+      className="relative w-full px-6 py-10 bg-primary text-white"
+    >
+      <header className="text-center mb-8">
+        <h2 className="text-3xl font-bold">Portfolio Clients</h2>
+      </header>
 
       <div
         ref={carouselRef}
@@ -80,22 +86,29 @@ const CompanyCarousel = () => {
         style={{
           scrollBehavior: 'smooth',
         }}
+        role="list"
       >
         {companies.map((company, index) => (
-          <a
+          <article
             key={index}
-            href={company.link}
-            target="_blank"
-            rel="noopener noreferrer"
+            role="listitem"
             className="flex flex-col items-center justify-center min-w-[150px] transition-transform hover:scale-105"
           >
-            <img
-              src={company.image}
-              alt={company.name}
-              className="w-32 h-auto object-contain mb-2"
-            />
-            <p className="text-center text-base font-medium">{company.name}</p>
-          </a>
+            <a
+              href={company.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center"
+              aria-label={`Visit ${company.name}`}
+            >
+              <img
+                src={company.image}
+                alt={`${company.name} logo`}
+                className="w-32 h-auto object-contain mb-2"
+              />
+              <p className="text-base font-medium">{company.name}</p>
+            </a>
+          </article>
         ))}
       </div>
 
@@ -109,7 +122,7 @@ const CompanyCarousel = () => {
           scrollbar-width: none;
         }
       `}</style>
-    </div>
+    </section>
   );
 };
 

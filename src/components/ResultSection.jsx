@@ -25,16 +25,13 @@ const resultsData = {
     },
   ],
   row3: [
-      {
-      // title: 'SAAMIR MITHWANI',
+    {
       src: 'https://res.cloudinary.com/gautamm16/image/upload/v1749479090/1_laolhr.png',
     },
     {
-      // title: 'SECTION8KARIM',
       src: 'https://res.cloudinary.com/gautamm16/image/upload/v1749479091/3_ioh7xr.png',
     },
     {
-      // title: 'INTEL PARTNER BRAND LLMWARE',
       src: 'https://res.cloudinary.com/gautamm16/image/upload/v1749479090/2_etquje.png',
     },
   ],
@@ -42,9 +39,12 @@ const resultsData = {
 
 export const ResultsSection = () => {
   return (
-    <section className="py-20 bg-primary" id="results">
+    <section className="py-20 bg-primary" id="results" aria-labelledby="results-heading">
       <div className="container-padding max-w-7xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-light text-center mb-16 animate-fade-in-up">
+        <h2
+          id="results-heading"
+          className="text-4xl md:text-5xl font-extrabold text-light text-center mb-16 animate-fade-in-up"
+        >
           Our <span className="text-gradient">Results</span>
         </h2>
 
@@ -62,20 +62,20 @@ const ResultsRow = ({ items, className }) => (
       <ResultCard key={index} item={item} />
     ))}
   </div>
-  
 );
 
 const ResultCard = ({ item }) => (
-  <div className="card-3d group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-2000">
+  <figure className="card-3d group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-2000">
     <img
       src={item.src}
-      alt={item.title || 'Result'}
+      alt={item.title || 'Client Result Image'}
+      loading="lazy"
       className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
     />
     {item.title && (
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+      <figcaption className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
         <h3 className="text-2xl font-display font-bold text-light">{item.title}</h3>
-      </div>
+      </figcaption>
     )}
-  </div>
+  </figure>
 );
