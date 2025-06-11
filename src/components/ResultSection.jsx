@@ -58,6 +58,9 @@ const CustomArrow = ({ onClick, direction }) => (
 
 export const ResultsSection = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [popupIndex, setPopupIndex] = useState(null);
+
+  const allItems = [...resultsData.row1, ...resultsData.row2, ...resultsData.row3];
 
   useEffect(() => {
     const checkScreenSize = () => setIsMobile(window.innerWidth < 768);
@@ -68,7 +71,7 @@ export const ResultsSection = () => {
 
   const filteredItems = isMobile
     ? [...resultsData.row1, ...resultsData.row3]
-    : [...resultsData.row1, ...resultsData.row2, ...resultsData.row3];
+    : allItems;
 
   const sliderSettings = {
     dots: true,
@@ -83,6 +86,22 @@ export const ResultsSection = () => {
     prevArrow: <CustomArrow direction="prev" />,
   };
 
+  const handleKeyDown = (e) => {
+    if (popupIndex !== null) {
+      if (e.key === 'ArrowRight') goNext();
+      else if (e.key === 'ArrowLeft') goPrev();
+      else if (e.key === 'Escape') setPopupIndex(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  });
+
+  const goPrev = () => setPopupIndex((prev) => (prev > 0 ? prev - 1 : allItems.length - 1));
+  const goNext = () => setPopupIndex((prev) => (prev < allItems.length - 1 ? prev + 1 : 0));
+
   return (
     <section className="py-20 bg-primary" id="results" aria-labelledby="results-heading">
       <div className="container-padding max-w-7xl mx-auto">
@@ -95,18 +114,26 @@ export const ResultsSection = () => {
 
         {/* Desktop View */}
         <div className="hidden md:block space-y-12">
-          <ResultsRow items={resultsData.row1} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" />
-
-          {/* Row 2 */}
+          <ResultsRow
+            items={resultsData.row1}
+            setPopupIndex={(i) => setPopupIndex(allItems.findIndex((img) => img.src === i))}
+            className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          />
           <div className="md:flex justify-center items-center gap-8 mb-12 min-h-[400px] hidden">
             {resultsData.row2.map((item, index) => (
               <div key={index} className="w-full max-w-md">
-                <ResultCard item={item} />
+                <ResultCard
+                  item={item}
+                  onClick={() => setPopupIndex(allItems.findIndex((img) => img.src === item.src))}
+                />
               </div>
             ))}
           </div>
-
-          <ResultsRow items={resultsData.row3} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" />
+          <ResultsRow
+            items={resultsData.row3}
+            setPopupIndex={(i) => setPopupIndex(allItems.findIndex((img) => img.src === i))}
+            className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          />
         </div>
 
         {/* Mobile Carousel */}
@@ -114,26 +141,76 @@ export const ResultsSection = () => {
           <Slider {...sliderSettings}>
             {filteredItems.map((item, index) => (
               <div key={index} className="px-4">
-                <ResultCard item={item} />
+                <ResultCard
+                  item={item}
+                  onClick={() => setPopupIndex(allItems.findIndex((img) => img.src === item.src))}
+                />
               </div>
             ))}
           </Slider>
         </div>
       </div>
+
+      {/* Popup Modal */}
+      {popupIndex !== null && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center px-4"
+          onClick={() => setPopupIndex(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full max-h-[90vh] rounded-lg overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-4 right-4 text-white text-3xl font-bold z-10 hover:text-red-400"
+              onClick={() => setPopupIndex(null)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <button
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl font-bold z-10 hover:text-gray-400"
+              onClick={goPrev}
+              aria-label="Previous"
+            >
+              ‹
+            </button>
+            <img
+              src={allItems[popupIndex].src}
+              alt="Popup"
+              className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
+            />
+            <button
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl font-bold z-10 hover:text-gray-400"
+              onClick={goNext}
+              aria-label="Next"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
 
-const ResultsRow = ({ items, className }) => (
+const ResultsRow = ({ items, setPopupIndex, className }) => (
   <div className={`grid gap-8 mb-12 ${className}`}>
     {items.map((item, index) => (
-      <ResultCard key={index} item={item} />
+      <ResultCard
+        key={index}
+        item={item}
+        onClick={() => setPopupIndex(item.src)}
+      />
     ))}
   </div>
 );
 
-const ResultCard = ({ item }) => (
-  <figure className="card-3d group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-1000">
+const ResultCard = ({ item, onClick }) => (
+  <figure
+    className="card-3d group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-1000 cursor-pointer"
+    onClick={onClick}
+  >
     <img
       src={item.src}
       alt={item.title || 'Client Result Image'}
