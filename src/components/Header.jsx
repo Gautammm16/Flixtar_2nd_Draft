@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import logo from '../assets/logo.png'; // adjust if needed
+import logo from '../assets/logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,31 +15,36 @@ const Header = () => {
 
   return (
     <header className="bg-primary py-4 px-6 shadow-lg sticky top-0 z-50" role="banner">
-      <div className="container mx-auto relative flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between relative">
+        
         {/* Logo */}
         <button
           onClick={() => handleNavClick('hero')}
           className="flex items-center z-10 focus:outline-none"
           aria-label="Go to Home Section"
         >
-          <img src={logo} alt="Flixtar Logo" className="h-14 w-auto" />
+          <img src={logo} alt="Flixtar Logo" className="h-14 w-auto" loading="lazy" />
         </button>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex space-x-8 absolute left-1/2 transform -translate-x-1/2" role="navigation" aria-label="Primary Navigation">
-          {['hero', 'results', 'work', 'testimonials'].map((id, idx) => (
+        {/* Desktop Navigation */}
+        <nav
+          className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8"
+          role="navigation"
+          aria-label="Primary Navigation"
+        >
+          {['hero', 'results', 'work', 'testimonials'].map((id) => (
             <button
-              key={idx}
+              key={id}
               onClick={() => handleNavClick(id)}
               className="text-light hover:text-accent transition"
-              aria-label={`Navigate to ${id.charAt(0).toUpperCase() + id.slice(1)} section`}
+              aria-label={`Navigate to ${id === 'hero' ? 'Home' : id}`}
             >
               {id === 'hero' ? 'Home' : id.charAt(0).toUpperCase() + id.slice(1)}
             </button>
           ))}
         </nav>
 
-        {/* CTA */}
+        {/* CTA Desktop */}
         <div className="hidden md:flex z-10">
           <button
             onClick={() => handleNavClick('book')}
@@ -53,37 +58,39 @@ const Header = () => {
         {/* Mobile Menu Toggle */}
         <button
           className="md:hidden text-light hover:text-accent transition z-10"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMenuOpen}
+          aria-controls="mobile-menu"
         >
-          {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          {isMenuOpen ? <FaTimes size={24} aria-hidden="true" /> : <FaBars size={24} aria-hidden="true" />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <nav
-          className="md:hidden bg-secondary mt-4 py-4 px-6 rounded-lg"
-          aria-label="Mobile Navigation"
-        >
-          <ul className="flex flex-col space-y-4">
-            {['hero', 'results', 'work', 'testimonials', 'book'].map((id, idx) => (
-              <li key={idx}>
-                <button
-                  onClick={() => handleNavClick(id)}
-                  className={`text-left transition ${
-                    id === 'book' ? 'text-accent font-semibold' : 'text-light hover:text-accent'
-                  }`}
-                  aria-label={`Navigate to ${id.charAt(0).toUpperCase() + id.slice(1)} section`}
-                >
-                  {id === 'hero' ? 'Home' : id.charAt(0).toUpperCase() + id.slice(1)}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+      {/* Mobile Navigation */}
+      <nav
+        id="mobile-menu"
+        className={`md:hidden bg-secondary overflow-hidden transition-all duration-300 ${
+          isMenuOpen ? 'max-h-[500px] mt-4 py-4 px-6 rounded-lg' : 'max-h-0'
+        }`}
+        aria-label="Mobile Navigation"
+      >
+        <ul className="flex flex-col space-y-4">
+          {['hero', 'results', 'work', 'testimonials', 'book'].map((id) => (
+            <li key={id}>
+              <button
+                onClick={() => handleNavClick(id)}
+                className={`text-left transition ${
+                  id === 'book' ? 'text-accent font-semibold' : 'text-light hover:text-accent'
+                }`}
+                aria-label={`Navigate to ${id === 'hero' ? 'Home' : id}`}
+              >
+                {id === 'hero' ? 'Home' : id.charAt(0).toUpperCase() + id.slice(1)}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 };
