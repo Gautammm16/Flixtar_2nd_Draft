@@ -1,60 +1,63 @@
-// VideoGrid.jsx
-import React from 'react';
+import React, { useState } from 'react';
 
 const videos = [
-  { url: 'https://player.vimeo.com/video/1027579242?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
-  { url: 'https://player.vimeo.com/video/1027581820?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
-  { url: 'https://player.vimeo.com/video/1027581935?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
-  { url: 'https://player.vimeo.com/video/1027582384?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
-  { url: 'https://player.vimeo.com/video/1027581890?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027579242?badge=0&autopause=0&player_id=0&app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027581820?badge=0&autopause=0&player_id=0&app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027581935?badge=0&autopause=0&player_id=0&app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027582384?badge=0&autopause=0&player_id=0&app_id=58479' },
+  { url: 'https://player.vimeo.com/video/1027581890?badge=0&autopause=0&player_id=0&app_id=58479' },
 ];
 
 export const VideoGrid = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const scroll = (direction) => {
+    if (direction === 'left' && activeIndex > 0) {
+      setActiveIndex((prev) => prev - 1);
+    } else if (direction === 'right' && activeIndex < videos.length - 1) {
+      setActiveIndex((prev) => prev + 1);
+    }
+  };
+
   return (
-    <div className="py-20 bg-primary">
+    <section className="py-16 bg-primary text-light" id="video-showcase">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-display font-bold text-light text-center mb-12 animate-fade-in-up">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
           Watch Our <span className="text-gradient">Featured Shorts</span>
         </h2>
 
-        <div className="flex flex-col items-center space-y-8">
-          {/* First row: 3 videos */}
-          <div className="flex flex-wrap justify-center gap-6 w-full">
-            {videos.slice(0, 3).map((video, index) => (
-              <VideoCard key={index} video={video} index={index} />
-            ))}
-          </div>
+        {/* Mobile Single Video View */}
+        <div className="relative md:hidden flex items-center justify-center">
+          <CarouselButton direction="left" onClick={() => scroll('left')} disabled={activeIndex === 0} />
+          <VideoCard video={videos[activeIndex]} index={activeIndex} />
+          <CarouselButton direction="right" onClick={() => scroll('right')} disabled={activeIndex === videos.length - 1} />
+        </div>
 
-          {/* Second row: 2 videos */}
-          <div className="flex flex-wrap justify-center gap-6 w-full">
-            {videos.slice(3).map((video, index) => (
-              <VideoCard key={index + 3} video={video} index={index + 3} />
-            ))}
-          </div>
+        {/* Desktop Grid Layout */}
+        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6 place-items-center">
+          {videos.map((video, index) => (
+            <VideoCard key={index} video={video} index={index} />
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
 const VideoCard = ({ video, index }) => {
-  // Add minimal controls parameters to existing URL
-  const embedUrl = `${video.url}&amp;controls=1&amp;autoplay=0&amp;title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;transparent=0&amp;background=1&amp;muted=0&amp;loop=0&amp;texttrack=0&amp;playbar=0&amp;volume=0&amp;fullscreen=0&amp;pip=0&amp;speed=0&amp;keyboard=0`;
+  const embedUrl = `${video.url}&controls=1&autoplay=0&title=0&byline=0&portrait=0&color=ffffff&transparent=0`;
 
   return (
     <div
-      className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
+      className="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 w-[85vw] sm:w-[240px] flex-shrink-0 bg-black flex items-center justify-center p-2"
       style={{
         aspectRatio: '9 / 16',
-        width: '100%',
-        maxWidth: '300px',
-        flex: '1 1 30%',
       }}
     >
       <iframe
         src={embedUrl}
-        title={`Video ${index + 1}`}
-        className="w-full h-full"
+        title={`Flixtar Client Video ${index + 1}`}
+        className="w-full h-full rounded-md"
         frameBorder="0"
         allow="autoplay; encrypted-media; picture-in-picture"
         allowFullScreen
@@ -63,3 +66,16 @@ const VideoCard = ({ video, index }) => {
     </div>
   );
 };
+
+const CarouselButton = ({ direction, onClick, disabled }) => (
+  <button
+    className={`absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 glass rounded-full flex items-center justify-center text-white text-2xl font-bold hover:bg-white/20 hover:shadow-lg transition-transform duration-300 transform hover:scale-110 focus:outline-none ${
+      direction === 'left' ? 'left-2' : 'right-2'
+    } ${disabled ? 'opacity-30 pointer-events-none' : ''}`}
+    onClick={onClick}
+    disabled={disabled}
+    aria-label={`${direction === 'left' ? 'Previous' : 'Next'} video`}
+  >
+    {direction === 'left' ? '‹' : '›'}
+  </button>
+);

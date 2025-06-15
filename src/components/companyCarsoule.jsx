@@ -1,3 +1,5 @@
+
+
 import React, { useRef, useEffect } from 'react';
 
 const companies = [
@@ -43,73 +45,86 @@ const CompanyCarousel = () => {
 
   useEffect(() => {
     const container = carouselRef.current;
-    let scrollInterval;
+    let animationFrameId;
 
-    const handleResize = () => {
+    const autoScroll = () => {
+      if (container && window.innerWidth < 768) {
+        container.scrollLeft += 1;
+        if (container.scrollLeft + container.offsetWidth >= container.scrollWidth) {
+          container.scrollLeft = 0;
+        }
+        animationFrameId = requestAnimationFrame(autoScroll);
+      }
+    };
+
+    let resizeObserver;
+    const startAutoScroll = () => {
       if (window.innerWidth < 768) {
-        scrollInterval = setInterval(() => {
-          if (container) {
-            container.scrollLeft += 1;
-            if (container.scrollLeft + container.offsetWidth >= container.scrollWidth) {
-              container.scrollLeft = 0;
-            }
-          }
-        }, 20);
+        animationFrameId = requestAnimationFrame(autoScroll);
       } else {
-        clearInterval(scrollInterval);
+        cancelAnimationFrame(animationFrameId);
         if (container) container.scrollLeft = 0;
       }
     };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
+    if ('ResizeObserver' in window) {
+      resizeObserver = new ResizeObserver(startAutoScroll);
+      resizeObserver.observe(document.body);
+    } else {
+      window.addEventListener('resize', startAutoScroll);
+    }
+
+    startAutoScroll();
 
     return () => {
-      clearInterval(scrollInterval);
-      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+      if (resizeObserver) resizeObserver.disconnect();
+      else window.removeEventListener('resize', startAutoScroll);
     };
   }, []);
 
   return (
-    <div className="relative w-full px-6 py-10 bg-primary text-white">
-      <h2 className="text-3xl font-bold mb-8 text-center">Portfolio Clients</h2>
+    <section
+      id="portfolio"
+      aria-label="Portfolio Clients Carousel"
+      className="relative w-full px-6 py-10 bg-primary text-white"
+    >
+      <header className="text-center mb-8">
+        <h2 className="text-3xl font-bold">Portfolio Clients</h2>
+      </header>
 
       <div
         ref={carouselRef}
-        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar transition-all duration-1000 ease-in-out"
-        style={{
-          scrollBehavior: 'smooth',
-        }}
+        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar scroll-smooth transition-all duration-2000 ease-in-out"
+        role="list"
       >
         {companies.map((company, index) => (
-          <a
+          <article
             key={index}
-            href={company.link}
-            target="_blank"
-            rel="noopener noreferrer"
+            role="listitem"
             className="flex flex-col items-center justify-center min-w-[150px] transition-transform hover:scale-105"
           >
-            <img
-              src={company.image}
-              alt={company.name}
-              className="w-32 h-auto object-contain mb-2"
-            />
-            <p className="text-center text-base font-medium">{company.name}</p>
-          </a>
+            <a
+              href={company.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-center"
+              aria-label={`Visit ${company.name}`}
+            >
+              <img
+                src={company.image}
+                alt={`${company.name} logo`}
+                loading="lazy"
+                width="128"
+                height="64"
+                className="w-32 h-auto object-contain mb-2"
+              />
+              <p className="text-base font-medium">{company.name}</p>
+            </a>
+          </article>
         ))}
       </div>
-
-      {/* Hide scrollbar utility */}
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-    </div>
+    </section>
   );
 };
 
