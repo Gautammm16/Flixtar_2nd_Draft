@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useEffect } from 'react';
 
 const companies = [
@@ -45,41 +43,41 @@ const CompanyCarousel = () => {
 
   useEffect(() => {
     const container = carouselRef.current;
-    let animationFrameId;
+    if (!container) return;
 
-    const autoScroll = () => {
-      if (container && window.innerWidth < 768) {
-        container.scrollLeft += 1;
-        if (container.scrollLeft + container.offsetWidth >= container.scrollWidth) {
-          container.scrollLeft = 0;
-        }
-        animationFrameId = requestAnimationFrame(autoScroll);
-      }
-    };
+    let scrollInterval;
 
-    let resizeObserver;
-    const startAutoScroll = () => {
+    const startScroll = () => {
       if (window.innerWidth < 768) {
-        animationFrameId = requestAnimationFrame(autoScroll);
-      } else {
-        cancelAnimationFrame(animationFrameId);
-        if (container) container.scrollLeft = 0;
+        const scrollStep = container.scrollWidth / companies.length;
+        scrollInterval = setInterval(() => {
+          container.scrollBy({ left: scrollStep, behavior: 'smooth' });
+
+          if (
+            container.scrollLeft + container.offsetWidth >=
+            container.scrollWidth - scrollStep
+          ) {
+            setTimeout(() => {
+              container.scrollTo({ left: 0, behavior: 'auto' });
+            }, 1000); // wait until the last smooth scroll completes
+          }
+        }, 1000); // scroll every 1 second
       }
     };
 
-    if ('ResizeObserver' in window) {
-      resizeObserver = new ResizeObserver(startAutoScroll);
-      resizeObserver.observe(document.body);
-    } else {
-      window.addEventListener('resize', startAutoScroll);
-    }
+    const stopScroll = () => {
+      if (scrollInterval) clearInterval(scrollInterval);
+    };
 
-    startAutoScroll();
+    startScroll();
+    window.addEventListener('resize', () => {
+      stopScroll();
+      startScroll();
+    });
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      if (resizeObserver) resizeObserver.disconnect();
-      else window.removeEventListener('resize', startAutoScroll);
+      stopScroll();
+      window.removeEventListener('resize', stopScroll);
     };
   }, []);
 
@@ -95,10 +93,11 @@ const CompanyCarousel = () => {
 
       <div
         ref={carouselRef}
-        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar scroll-smooth transition-all duration-1000 ease-in-out"
+        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar scroll-smooth"
         role="list"
       >
-        {companies.map((company, index) => (
+        {/* Render logos twice for smooth looping */}
+        {[...companies, ...companies].map((company, index) => (
           <article
             key={index}
             role="listitem"
