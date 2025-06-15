@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="bg-secondary py-12">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <h3 className="text-xl font-bold text-accent mb-4">Flixtar</h3>
             <p className="text-gray-400">
@@ -43,7 +43,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          {/* <div>
             <h4 className="text-lg font-semibold mb-4">Services</h4>
             <ul className="space-y-2">
               <li>
@@ -67,7 +67,7 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           <div>
             <h4 className="text-lg font-semibold mb-4">Connect</h4>
