@@ -95,7 +95,7 @@ const CompanyCarousel = () => {
 
       <div
         ref={carouselRef}
-        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar scroll-smooth transition-all duration-2000 ease-in-out"
+        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar scroll-smooth transition-all duration-1000 ease-in-out"
         role="list"
       >
         {companies.map((company, index) => (
