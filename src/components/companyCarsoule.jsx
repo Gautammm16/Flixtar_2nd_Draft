@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useEffect } from 'react';
 
 const companies = [
@@ -42,44 +40,55 @@ const companies = [
 
 const CompanyCarousel = () => {
   const carouselRef = useRef(null);
+  const animationRef = useRef(null);
 
   useEffect(() => {
     const container = carouselRef.current;
-    let animationFrameId;
 
-    const autoScroll = () => {
-      if (container && window.innerWidth < 768) {
-        container.scrollLeft += 1;
-        if (container.scrollLeft + container.offsetWidth >= container.scrollWidth) {
+    const startScroll = () => {
+      if (!container || window.innerWidth >= 768) return;
+
+      let scrollSpeed = 0.5; // Adjust this value for faster/slower scroll
+
+      const step = () => {
+        container.scrollLeft += scrollSpeed;
+
+        // Seamless loop logic
+        if (container.scrollLeft >= container.scrollWidth / 2) {
           container.scrollLeft = 0;
         }
-        animationFrameId = requestAnimationFrame(autoScroll);
-      }
+
+        animationRef.current = requestAnimationFrame(step);
+      };
+
+      animationRef.current = requestAnimationFrame(step);
     };
 
-    let resizeObserver;
-    const startAutoScroll = () => {
-      if (window.innerWidth < 768) {
-        animationFrameId = requestAnimationFrame(autoScroll);
-      } else {
-        cancelAnimationFrame(animationFrameId);
-        if (container) container.scrollLeft = 0;
-      }
+    const stopScroll = () => {
+      cancelAnimationFrame(animationRef.current);
+      if (carouselRef.current) carouselRef.current.scrollLeft = 0;
     };
 
-    if ('ResizeObserver' in window) {
-      resizeObserver = new ResizeObserver(startAutoScroll);
-      resizeObserver.observe(document.body);
-    } else {
-      window.addEventListener('resize', startAutoScroll);
+    const handleResize = () => {
+      stopScroll();
+      if (window.innerWidth < 768) startScroll();
+    };
+
+    // Duplicate content once for seamless scroll
+    if (carouselRef.current && window.innerWidth < 768) {
+      const originalChildren = [...carouselRef.current.children];
+      originalChildren.forEach(child => {
+        const clone = child.cloneNode(true);
+        carouselRef.current.appendChild(clone);
+      });
     }
 
-    startAutoScroll();
+    window.addEventListener('resize', handleResize);
+    startScroll();
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      if (resizeObserver) resizeObserver.disconnect();
-      else window.removeEventListener('resize', startAutoScroll);
+      cancelAnimationFrame(animationRef.current);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -95,7 +104,7 @@ const CompanyCarousel = () => {
 
       <div
         ref={carouselRef}
-        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar scroll-smooth transition-all duration-2000 ease-in-out"
+        className="flex overflow-x-auto md:flex-wrap md:justify-center items-center gap-10 px-4 no-scrollbar scroll-smooth whitespace-nowrap"
         role="list"
       >
         {companies.map((company, index) => (
