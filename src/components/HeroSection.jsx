@@ -42,45 +42,123 @@ const HeroHeading = () => (
   </div>
 );
 
+// const HeroVideo = () => {
+//   const videoContainerRef = useRef(null);
+//   const videoRef = useRef(null);
+
+//   useEffect(() => {
+//     const container = videoContainerRef.current;
+//     const iframe = videoRef.current;
+
+//     const observer = new IntersectionObserver(
+//       ([entry]) => {
+//         if (iframe && iframe.contentWindow) {
+//           const command = entry.isIntersecting ? 'unMute' : 'mute';
+//           iframe.contentWindow.postMessage(
+//             `{"event":"command","func":"${command}","args":""}`,
+//             '*'
+//           );
+//         }
+//       },
+//       { threshold: 0.5 }
+//     );
+
+//     if (container) observer.observe(container);
+
+//     const timer = setTimeout(() => {
+//       if (iframe && iframe.contentWindow) {
+//         iframe.contentWindow.postMessage(
+//           '{"event":"command","func":"playVideo","args":""}',
+//           '*'
+//         );
+//         iframe.contentWindow.postMessage(
+//           '{"event":"command","func":"unMute","args":""}',
+//           '*'
+//         );
+//       }
+//     }, 1000);
+
+//     return () => {
+//       if (container) observer.unobserve(container);
+//       clearTimeout(timer);
+//     };
+//   }, []);
+
+//   return (
+//     <div
+//       ref={videoContainerRef}
+//       className="max-w-4xl w-full mb-12 border-4 border-accent rounded-xl overflow-hidden shadow-glow hover:shadow-glow-lg transition-all duration-300"
+//     >
+//       <div className="relative w-full h-0 pb-[56.25%]">
+//         <iframe
+//           ref={videoRef}
+//           className="absolute top-0 left-0 w-full h-full"
+//           src="https://www.youtube.com/embed/eIehlyi_ca0?enablejsapi=1&autoplay=1&mute=0&loop=1&playlist=eIehlyi_ca0&controls=1&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&playsinline=1&fs=0"
+//           title="Strategic Video Branding by Flixtar"
+//           frameBorder="0"
+//           allow="autoplay; encrypted-media; picture-in-picture"
+//           allowFullScreen
+//           referrerPolicy="strict-origin-when-cross-origin"
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
 const HeroVideo = () => {
   const videoContainerRef = useRef(null);
+  const playerRef = useRef(null);
   const videoRef = useRef(null);
 
   useEffect(() => {
-    const container = videoContainerRef.current;
-    const iframe = videoRef.current;
+    const loadYouTubeAPI = () => {
+      return new Promise((resolve) => {
+        if (window.YT && window.YT.Player) {
+          resolve();
+        } else {
+          const tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          document.body.appendChild(tag);
+          window.onYouTubeIframeAPIReady = resolve;
+        }
+      });
+    };
+
+    const createPlayer = () => {
+      playerRef.current = new window.YT.Player(videoRef.current, {
+        events: {
+          onReady: (event) => {
+            event.target.playVideo();
+            event.target.unMute();
+          },
+        },
+      });
+    };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (iframe && iframe.contentWindow) {
-          const command = entry.isIntersecting ? 'unMute' : 'mute';
-          iframe.contentWindow.postMessage(
-            `{"event":"command","func":"${command}","args":""}`,
-            '*'
-          );
+        if (playerRef.current) {
+          if (entry.isIntersecting) {
+            playerRef.current.unMute();
+          } else {
+            playerRef.current.mute();
+          }
         }
       },
       { threshold: 0.5 }
     );
 
-    if (container) observer.observe(container);
-
-    const timer = setTimeout(() => {
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage(
-          '{"event":"command","func":"playVideo","args":""}',
-          '*'
-        );
-        iframe.contentWindow.postMessage(
-          '{"event":"command","func":"unMute","args":""}',
-          '*'
-        );
+    loadYouTubeAPI().then(() => {
+      createPlayer();
+      if (videoContainerRef.current) {
+        observer.observe(videoContainerRef.current);
       }
-    }, 1000);
+    });
 
     return () => {
-      if (container) observer.unobserve(container);
-      clearTimeout(timer);
+      if (videoContainerRef.current) {
+        observer.unobserve(videoContainerRef.current);
+      }
     };
   }, []);
 
@@ -92,6 +170,7 @@ const HeroVideo = () => {
       <div className="relative w-full h-0 pb-[56.25%]">
         <iframe
           ref={videoRef}
+          id="hero-video"
           className="absolute top-0 left-0 w-full h-full"
           src="https://www.youtube.com/embed/eIehlyi_ca0?enablejsapi=1&autoplay=1&mute=0&loop=1&playlist=eIehlyi_ca0&controls=1&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&playsinline=1&fs=0"
           title="Strategic Video Branding by Flixtar"
@@ -104,6 +183,7 @@ const HeroVideo = () => {
     </div>
   );
 };
+
 
 const HeroButtons = ({ onNavClick }) => (
   <div className="flex flex-col sm:flex-row gap-4">
