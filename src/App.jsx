@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import FlixtarLikeSPA from './pages/FlixtarSPA';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Loader from './components/Loader';
+import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
+import FlixtarLikeSPA from "./pages/FlixtarSPA.jsx"
+import Loader from "./components/Loader.jsx";
+import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
+import { Route,Routes } from 'react-router-dom';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,11 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col App">
+      <Helmet>
+        <title>Flixtar | Social Media Growth</title>
+        <meta name="description" content="Flixtar is a growth agency helping startups & creators scale fast on Instagram & YouTube." />
+      </Helmet>
+
       <Header />
       <main className="flex-grow">
         <Routes>
@@ -44,3 +50,4 @@ function App() {
 }
 
 export default App;
+
