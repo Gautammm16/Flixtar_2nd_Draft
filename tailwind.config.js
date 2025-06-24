@@ -10,16 +10,11 @@ export default {
   ],
   theme: {
     extend: {
-      // screens :{
-
-      //   '3xl':'1600px',
-      //   '4xl':'1920px',
-      // },
       colors: {
         border: "hsl(214.3 31.8% 91.4%)",
         primary: {
-          DEFAULT: '#0F0F1A', // Dark blue-black (LanderX inspired)
-          50: '#1E1E2F', // Slightly lighter
+          DEFAULT: '#0F0F1A',
+          50: '#1E1E2F',
           100: '#2D2D44',
           200: '#3C3C59',
           300: '#4B4B6E',
@@ -31,7 +26,7 @@ export default {
           900: '#A5A5EC',
         },
         secondary: {
-          DEFAULT: '#1A1A2E', // Slightly lighter dark blue
+          DEFAULT: '#1A1A2E',
           50: '#2A2A3E',
           100: '#3A3A4E',
           200: '#4A4A5E',
@@ -43,20 +38,20 @@ export default {
           800: '#AAAABE',
           900: '#BABACE',
         },
-         accent: {
+        accent: {
           DEFAULT: '#6C63FF',
           50: '#F5F4FF',
           100: '#E9E8FF',
           200: '#D6D4FF',
           300: '#B8B5FF',
           400: '#948FFF',
-          500: '#6C63FF', // Main accent color
+          500: '#6C63FF',
           600: '#5D54F0',
           700: '#4C43D6',
           800: '#3F37AE',
           900: '#37318A',
-          light: '#8B85FF', // Adding the specific light variant
-          dark: '#4A42CC', // Adding the specific dark variant
+          light: '#8B85FF',
+          dark: '#4A42CC',
         },
         dark: {
           DEFAULT: '#000000',
@@ -103,11 +98,12 @@ export default {
         'gradient-x': 'gradientX 10s ease infinite',
         'gradient-y': 'gradientY 10s ease infinite',
         'gradient-xy': 'gradientXY 10s ease infinite',
+        'scrollX': 'scrollX 20s linear infinite', // ✅ added
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0',transform: 'scale(0.95)' },
-          '100%': { opacity: '1', transform: 'scale(1)'  },
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
         },
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(40px)' },
@@ -171,7 +167,11 @@ export default {
             'background-size': '200% 200%',
             'background-position': 'right center'
           }
-        }
+        },
+        scrollX: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' }, // ✅ added
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
