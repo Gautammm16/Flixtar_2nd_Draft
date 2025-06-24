@@ -68,7 +68,7 @@ const CompanyCarousel = () => {
     if (!isMobile || !carouselRef.current) return;
 
     const container = carouselRef.current;
-    let scrollSpeed = 0.5;
+    let scrollSpeed = 1;
 
     const scroll = () => {
       if (container.scrollLeft >= container.scrollWidth / 2) {
