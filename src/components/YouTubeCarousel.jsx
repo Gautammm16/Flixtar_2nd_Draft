@@ -74,7 +74,7 @@
 //       videoId: videos[currentIndex],
 //       playerVars: {
 //         autoplay: 1,
-//         controls: 0,
+//         controls: 1,
 //         modestbranding: 1,
 //         rel: 0,
 //         iv_load_policy: 3,
@@ -208,9 +208,8 @@
 
 // export default YouTubeCarousel;
 
-
-
 import React, { useEffect, useRef, useState } from 'react';
+import { useYouTubeAPI } from '../hooks/useYouTubeAPI';
 
 const videos = [
   'ztvpb8DujAc',
@@ -223,42 +222,51 @@ const videos = [
 const AUTO_PREVIEW_DELAY = 5000;
 
 const YouTubeCarousel = () => {
+  const apiReady = useYouTubeAPI();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showModal, setShowModal] = useState(false);
   const playerRef = useRef(null);
   const previewTimeoutRef = useRef(null);
   const hasInteractedRef = useRef(false);
-  const playerContainerId = 'youtube-player-container';
   const playerContainerRef = useRef(null);
   const observer = useRef(null);
 
-  useEffect(() => {
-    const loadYT = () =>
-      new Promise((resolve) => {
-        if (window.YT && window.YT.Player) {
-          resolve(window.YT);
-        } else {
-          const tag = document.createElement('script');
-          tag.src = 'https://www.youtube.com/iframe_api';
-          document.body.appendChild(tag);
-          window.onYouTubeIframeAPIReady = () => resolve(window.YT);
-        }
-      });
+  const playerContainerId = 'youtube-player-container';
 
-    loadYT().then(() => createPlayer());
+  useEffect(() => {
+    if (!apiReady || !document.getElementById(playerContainerId)) return;
+
+    if (playerRef.current?.destroy) {
+      playerRef.current.destroy();
+    }
+
+    playerRef.current = new window.YT.Player(playerContainerId, {
+      videoId: videos[currentIndex],
+      playerVars: {
+        autoplay: 1,
+        mute: 1,
+        loop: 1,
+        playlist: videos[currentIndex],
+        controls: 1,
+        modestbranding: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        disablekb: 1,
+        playsinline: 1,
+        fs: 0,
+      },
+      events: {
+        onReady: (event) => {
+          event.target.playVideo();
+          setupPreviewTimeout();
+        },
+        onStateChange: onPlayerStateChange,
+      },
+    });
 
     return () => {
       clearTimeout(previewTimeoutRef.current);
-      if (playerRef.current?.destroy) playerRef.current.destroy();
-      if (observer.current) observer.current.disconnect();
-      window.onYouTubeIframeAPIReady = null;
     };
-  }, []);
-
-  useEffect(() => {
-    if (playerRef.current?.destroy) playerRef.current.destroy();
-    if (window.YT && window.YT.Player) createPlayer();
-  }, [currentIndex]);
+  }, [apiReady, currentIndex]);
 
   useEffect(() => {
     if (!playerContainerRef.current) return;
@@ -278,35 +286,7 @@ const YouTubeCarousel = () => {
     observer.current.observe(playerContainerRef.current);
 
     return () => observer.current?.disconnect();
-  }, [playerContainerRef.current, currentIndex]);
-
-  const createPlayer = () => {
-    if (!document.getElementById(playerContainerId)) return;
-
-    playerRef.current = new window.YT.Player(playerContainerId, {
-      videoId: videos[currentIndex],
-      playerVars: {
-        autoplay: 1,
-        controls: 0,
-        modestbranding: 1,
-        rel: 0,
-        iv_load_policy: 3,
-        disablekb: 1,
-        playsinline: 1,
-        fs: 0,
-        mute: 1,
-      },
-      events: {
-        onReady: (event) => {
-          event.target.mute();
-          event.target.playVideo();
-          hasInteractedRef.current = false;
-          setupPreviewTimeout();
-        },
-        onStateChange: onPlayerStateChange,
-      },
-    });
-  };
+  }, [apiReady, currentIndex]);
 
   const onPlayerStateChange = (event) => {
     const state = event.data;
@@ -344,15 +324,6 @@ const YouTubeCarousel = () => {
     setCurrentIndex(index);
   };
 
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
-
-  useEffect(() => {
-    const handleEsc = (e) => e.key === 'Escape' && closeModal();
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
-
   return (
     <section className="w-full bg-secondary px-4 md:px-8 lg:px-16 py-16 sm:py-20" id="work">
       <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-center mb-12 text-white">
@@ -363,13 +334,12 @@ const YouTubeCarousel = () => {
         <div className="relative flex w-full items-center justify-center">
           <CarouselButton direction="prev" onClick={goToPrevVideo} />
 
-          <div
-            className="w-full max-w-3xl sm:mx-6 md:mx-12 cursor-pointer"
-            ref={playerContainerRef}
-            onClick={openModal}
-          >
+          <div className="w-full max-w-3xl sm:mx-6 md:mx-12" ref={playerContainerRef}>
             <div className="relative w-full h-0 pb-[56.25%] rounded-2xl overflow-hidden shadow-lg">
-              <div id={playerContainerId} className="absolute top-0 left-0 w-full h-full" />
+              <div
+                id={playerContainerId}
+                className="absolute top-0 left-0 w-full h-full"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent pointer-events-none rounded-2xl" />
             </div>
           </div>
@@ -377,54 +347,22 @@ const YouTubeCarousel = () => {
           <CarouselButton direction="next" onClick={goToNextVideo} />
         </div>
 
-        <CarouselDots count={videos.length} currentIndex={currentIndex} onDotClick={userSelectVideo} />
+        <CarouselDots
+          count={videos.length}
+          currentIndex={currentIndex}
+          onDotClick={userSelectVideo}
+        />
+
         <VideoCounter current={currentIndex + 1} total={videos.length} />
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-          onClick={closeModal}
-        >
-          <div className="relative w-full max-w-5xl aspect-video" onClick={(e) => e.stopPropagation()}>
-            <iframe
-              className="w-full h-full rounded-lg"
-              src={`https://www.youtube.com/embed/${videos[currentIndex]}?autoplay=1&controls=1`}
-              title="YouTube video"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-            />
-            <button
-              className="absolute top-2 right-2 bg-white/20 text-white text-xl px-3 py-1 rounded hover:bg-white/30"
-              onClick={closeModal}
-            >
-              ✕
-            </button>
-            <button
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-3xl"
-              onClick={goToPrevVideo}
-            >
-              ‹
-            </button>
-            <button
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white text-3xl"
-              onClick={goToNextVideo}
-            >
-              ›
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
 
 const CarouselButton = ({ direction, onClick }) => (
   <button
-    className={`absolute top-1/2 -translate-y-1/2 ${
-      direction === 'prev' ? 'left-2 sm:left-4' : 'right-2 sm:right-4'
-    } z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 glass rounded-full flex items-center justify-center text-white text-xl md:text-2xl font-bold hover:bg-white/20 hover:shadow-lg transition-transform duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-accent`}
+    className={`absolute top-1/2 -translate-y-1/2 ${direction === 'prev' ? 'left-2 sm:left-4' : 'right-2 sm:right-4'
+      } z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 glass rounded-full flex items-center justify-center text-white text-xl md:text-2xl font-bold hover:bg-white/20 hover:shadow-lg transition-transform duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-accent`}
     onClick={onClick}
     aria-label={`${direction === 'prev' ? 'Previous' : 'Next'} video`}
   >
@@ -437,11 +375,10 @@ const CarouselDots = ({ count, currentIndex, onDotClick }) => (
     {Array.from({ length: count }).map((_, index) => (
       <button
         key={index}
-        className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none ${
-          index === currentIndex
-            ? 'bg-gradient-to-r from-accent to-accent-light shadow-md scale-125'
-            : 'bg-white/30 hover:bg-white/60'
-        }`}
+        className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none ${index === currentIndex
+          ? 'bg-gradient-to-r from-accent to-accent-light shadow-md scale-125'
+          : 'bg-white/30 hover:bg-white/60'
+          }`}
         onClick={() => onDotClick(index)}
         aria-label={`Go to video ${index + 1}`}
       />
