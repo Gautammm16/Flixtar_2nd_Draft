@@ -52,10 +52,12 @@ const CompanyCarousel = () => {
   return (
     <section className="bg-primary py-10 w-full overflow-hidden">
       <h2 className="text-center text-3xl text-white font-bold mb-8">Portfolio Clients</h2>
-      <div className="relative w-full overflow-x-hidden">
+      <div className="relative w-full overflow-hidden"> {/* Prevent overflow from scroll */}
         <div
-          className={`mx-auto flex gap-12 items-center no-scrollbar ${
-            isMobile ? 'animate-scrollX w-max' : 'justify-center overflow-x-auto whitespace-nowrap'
+          className={`mx-auto flex gap-12 items-center ${
+            isMobile
+              ? 'animate-scrollX w-max overflow-hidden no-scrollbar'
+              : 'justify-center overflow-hidden whitespace-nowrap no-scrollbar'
           }`}
         >
           {logos.map((company, index) => (
@@ -70,7 +72,7 @@ const CompanyCarousel = () => {
               <img
                 src={company.image}
                 alt={company.name}
-                className="w-20 sm:w-24 md:w-28 lg:w-32 h-auto object-contain mb-2"
+                className="w-28 sm:w-24 md:w-20 lg:w-32 h-auto object-contain mb-2"
                 loading="lazy"
               />
               <span className="text-white text-sm text-center">{company.name}</span>
