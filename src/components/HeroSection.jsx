@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export const HeroSection = () => {
   const sectionRef = useRef(null);
@@ -42,13 +42,14 @@ const HeroHeading = () => (
   </div>
 );
 
-
 const HeroVideo = () => {
   const videoContainerRef = useRef(null);
-  const playerRef = useRef(null);
   const videoRef = useRef(null);
+  const playerRef = useRef(null);
 
   useEffect(() => {
+    let observer;
+
     const loadYouTubeAPI = () => {
       return new Promise((resolve) => {
         if (window.YT && window.YT.Player) {
@@ -73,28 +74,32 @@ const HeroVideo = () => {
       });
     };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (playerRef.current) {
+    const handleVisibility = (entries) => {
+      entries.forEach((entry) => {
+        if (playerRef.current && playerRef.current.isMuted) {
           if (entry.isIntersecting) {
             playerRef.current.unMute();
           } else {
             playerRef.current.mute();
           }
         }
-      },
-      { threshold: 0.5 }
-    );
+      });
+    };
 
     loadYouTubeAPI().then(() => {
       createPlayer();
+
+      observer = new IntersectionObserver(handleVisibility, {
+        threshold: 0.5,
+      });
+
       if (videoContainerRef.current) {
         observer.observe(videoContainerRef.current);
       }
     });
 
     return () => {
-      if (videoContainerRef.current) {
+      if (observer && videoContainerRef.current) {
         observer.unobserve(videoContainerRef.current);
       }
     };
@@ -121,7 +126,6 @@ const HeroVideo = () => {
     </div>
   );
 };
-
 
 const HeroButtons = ({ onNavClick }) => (
   <div className="flex flex-col sm:flex-row gap-4">
