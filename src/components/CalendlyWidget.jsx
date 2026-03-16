@@ -23,7 +23,7 @@ const CalendlyWidget = () => {
           }}
         >
           <iframe
-            src="https://calendly.com/info-flixtar/30min?embed_domain=localhost&embed_type=Inline"
+            src="https://calendly.com/info-flixtar/new-meeting?embed_domain=localhost&embed_type=Inline"
             className="w-full min-h-[800px] md:min-h-[900px] lg:min-h-[1000px] 2xl:min-h-[1100px]"
             frameBorder="0"
             scrolling="auto"
